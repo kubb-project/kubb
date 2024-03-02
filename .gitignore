@@ -3,6 +3,7 @@
 # editors
 #.vscode
 .idea/
+*.iml
 
 # dependencies
 node_modules
@@ -47,3 +48,4 @@ test.json
 docs/.vitepress/cache/**
 docs/.vitepress/dist/**
 !__snapshots__
+.pnpm-store/

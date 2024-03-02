@@ -115,7 +115,14 @@ export class TypeGenerator extends Generator<PluginOptions['resolvedOptions'], C
       const schema = properties[name] as OasTypes.SchemaObject
 
       const isRequired = Array.isArray(required) ? required.includes(name) : !!required
-      let type = this.getTypeFromSchema(schema, this.context.pluginManager.resolveName({ name: `${baseName || ''} ${name}`, pluginKey, type: 'type' }))
+      let type = this.getTypeFromSchema(
+        schema,
+        this.context.pluginManager.resolveName({
+          name: `${baseName || ''} ${name}`,
+          pluginKey,
+          type: 'type',
+        }),
+      )
 
       if (!type) {
         return null
@@ -303,7 +310,14 @@ export class TypeGenerator extends Generator<PluginOptions['resolvedOptions'], C
           type: this.options.enumType,
         }),
       )
-      return factory.createTypeReferenceNode(this.context.pluginManager.resolveName({ name: enumName, pluginKey, type: 'type' }), undefined)
+      return factory.createTypeReferenceNode(
+        this.context.pluginManager.resolveName({
+          name: enumName,
+          pluginKey,
+          type: 'type',
+        }),
+        undefined,
+      )
     }
 
     if (schema.enum) {
@@ -386,18 +400,53 @@ export class TypeGenerator extends Generator<PluginOptions['resolvedOptions'], C
         })
       }
 
-      if (this.options.dateType === 'date' && ['date', 'date-time'].some((item) => item === schema.format)) {
-        return factory.createTypeReferenceNode(factory.createIdentifier('Date'))
+      /**
+       * > Structural validation alone may be insufficient to allow an application to correctly utilize certain values. The "format"
+       * > annotation keyword is defined to allow schema authors to convey semantic information for a fixed subset of values which are
+       * > accurately described by authoritative resources, be they RFCs or other external specifications.
+       *
+       * In other words: format is more specific than type alone, hence it should override the type value, if possible.
+       *
+       * see also https://json-schema.org/draft/2020-12/draft-bhutton-json-schema-validation-00#rfc.section.7
+       */
+      if (schema.format) {
+        switch (schema.format) {
+          case 'binary':
+            if (schema.type === 'string') {
+              return factory.createTypeReferenceNode('Blob', [])
+            }
+            break
+          // 7.3.1. Dates, Times, and Duration
+          case 'date-time':
+          case 'date':
+          case 'time':
+            if (this.options.dateType === 'date') {
+              return factory.createTypeReferenceNode(factory.createIdentifier('Date'))
+            }
+          case 'uuid':
+            // TODO how to work with this? use https://www.npmjs.com/package/uuid for it?
+            break
+          case 'duration':
+          case 'email':
+          case 'idn-email':
+          case 'hostname':
+          case 'idn-hostname':
+          case 'ipv4':
+          case 'ipv6':
+          case 'uri':
+          case 'uri-reference':
+          case 'json-pointer':
+          case 'relative-json-pointer':
+          default:
+            // formats not yet implemented: ignore.
+            break
+        }
       }
 
       // string, boolean, null, number
       if (schema.type in factory.keywordTypeNodes) {
         return factory.keywordTypeNodes[schema.type as keyof typeof factory.keywordTypeNodes]
       }
-    }
-
-    if (schema.format === 'binary') {
-      return factory.createTypeReferenceNode('Blob', [])
     }
 
     return this.#unknownReturn
