@@ -9,12 +9,12 @@ outline: deep
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ref, onMounted } from 'vue';
-import { Example } from '../../components/Example';
+import { ExampleLink } from '../../components/ExampleLink';
 
 const example = ref();
 onMounted(() => {
   const root = createRoot(example.value);
-  root.render(createElement(Example, {config: `{
+  root.render(createElement(ExampleLink, {config: `{
   input: {
     path: './petStore.json',
   },

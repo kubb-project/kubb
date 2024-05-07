@@ -482,6 +482,14 @@ export default defineConfig({
   description: title,
   vite: {
     plugins: [react()],
+    server: {
+      headers: {
+        "Cross-Origin-Opener-Policy": "same-origin",
+        "Cross-Origin-Embedder-Policy": "credentialless",
+        'Access-Control-Allow-Origin': '*',
+        'Content-Security-Policy': `script-src https://github.githubassets.com; script-src-elem https://github.githubassets.com;`,
+     }
+    }
   },
   head: [
     ['meta', { property: 'og:title', content: `Kubb: ${title}` }],
