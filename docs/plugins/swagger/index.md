@@ -5,6 +5,39 @@ title: \@kubb/swagger
 outline: deep
 ---
 
+<script setup>
+import { createElement } from 'react';
+import { createRoot } from 'react-dom/client';
+import { ref, onMounted } from 'vue';
+import { Example } from '../../components/Example';
+
+const example = ref();
+onMounted(() => {
+  const root = createRoot(example.value);
+  root.render(createElement(Example, {config: `{
+  input: {
+    path: './petStore.json',
+  },
+  output: {
+    path: './src/gen',
+  },
+  plugins: [
+    pluginSwagger({
+      validate: true,
+      output: {
+        path: './json',
+      },
+      docs: {
+        path: './docs/index.html',
+      },
+      serverIndex: 0,
+      contentType: 'application/json'
+    }),
+  ],
+}`}, null))
+})
+</script>
+
 # @kubb/swagger <a href="https://paka.dev/npm/@kubb/swagger@latest/api">🦙</a>
 
 With the Swagger plugin, you can create a JSON schema out of a Swagger file.
@@ -243,6 +276,9 @@ const plugin = pluginSwagger({
 :::
 
 ## Example
+
+<div ref="example" />
+
 
 ```typescript twoslash
 import { defineConfig } from '@kubb/core'

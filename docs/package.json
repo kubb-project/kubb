@@ -19,6 +19,8 @@
     "serve": "vitepress serve"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.13.10",
+    "@monaco-editor/react": "^4.6.0",
     "@shikijs/vitepress-twoslash": "^1.4.0",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",
@@ -41,8 +43,10 @@
     "@kubb/swagger-zodios": "workspace:*",
     "@types/node": "^20.12.8",
     "@types/react": "^18.3.1",
+    "@vitejs/plugin-react": "^4.2.1",
     "axios": "^1.6.8",
     "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "unplugin-kubb": "workspace:^",
     "vite": "^5.2.11"
   },

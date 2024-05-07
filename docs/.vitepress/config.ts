@@ -4,6 +4,7 @@ import { resolve } from 'node:path'
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash'
 import { SitemapStream } from 'sitemap'
 import { defineConfig } from 'vitepress'
+import react from '@vitejs/plugin-react';
 
 import { version } from '../../packages/core/package.json'
 
@@ -479,6 +480,9 @@ export default defineConfig({
   lang: 'en-UK',
   title: 'Kubb',
   description: title,
+  vite: {
+    plugins: [react()],
+  },
   head: [
     ['meta', { property: 'og:title', content: `Kubb: ${title}` }],
     ['meta', { property: 'og:image', content: ogImage }],
